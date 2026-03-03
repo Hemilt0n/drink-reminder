@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>DrinkReminder</AssemblyName>
+    <RootNamespace>DrinkReminder</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>DrinkReminder Team</Authors>
+    <Description>Windows 喝水提醒小助手 - 帮助您养成规律饮水的习惯</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- 图标设置：如果存在则使用 -->
+  <PropertyGroup Condition="Exists('Resources\Icons\app.ico')">
+    <ApplicationIcon>Resources\Icons\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF UI 现代化界面框架 -->
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
+
+    <!-- 系统托盘图标 -->
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+
+    <!-- SQLite 数据库 -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+
+    <!-- 图表库 -->
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
+
+    <!-- MVVM 工具包 -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+
+    <!-- Windows 社区工具包（Toast 通知） -->
+    <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

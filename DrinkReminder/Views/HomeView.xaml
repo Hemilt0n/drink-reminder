@@ -1,0 +1,199 @@
+<UserControl x:Class="DrinkReminder.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:DrinkReminder.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="500"
+             d:DesignWidth="380">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="16,8">
+            <!-- 进度环区域 -->
+            <ui:Card Margin="0,0,0,16">
+                <Grid Margin="24,16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- 进度环 -->
+                    <Grid Grid.Row="0"
+                          Width="180"
+                          Height="180"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,16">
+                        <!-- 背景圆环 -->
+                        <Ellipse Stroke="{DynamicResource ControlElevationBorderBrush}"
+                                 StrokeThickness="12"
+                                 Fill="Transparent" />
+
+                        <!-- 进度弧线使用 Arc -->
+                        <Path Stroke="#2196F3"
+                              StrokeThickness="12"
+                              Fill="Transparent"
+                              Stretch="None"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathGeometry.Figures>
+                                        <PathFigureCollection>
+                                            <PathFigure StartPoint="90,16">
+                                                <PathFigure.Segments>
+                                                    <PathSegmentCollection>
+                                                        <ArcSegment x:Name="ProgressArc"
+                                                                    Point="90,16"
+                                                                    Size="74,74"
+                                                                    IsLargeArc="False"
+                                                                    SweepDirection="Clockwise" />
+                                                    </PathSegmentCollection>
+                                                </PathFigure.Segments>
+                                            </PathFigure>
+                                        </PathFigureCollection>
+                                    </PathGeometry.Figures>
+                                </PathGeometry>
+                            </Path.Data>
+                        </Path>
+
+                        <!-- 中心内容 -->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding TodayStats.TotalMl, StringFormat={}{0} ml}"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding TodayStats.ProgressPercent, StringFormat={}{0}%}"
+                                       FontSize="18"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding TodayStats.GoalMl, StringFormat=目标 {0} ml}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 完成提示 -->
+                    <Border Grid.Row="1"
+                            Background="#4CAF50"
+                            CornerRadius="4"
+                            Padding="12,6"
+                            HorizontalAlignment="Center"
+                            Visibility="{Binding TodayStats.IsGoalMet, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="🎉 今日目标已达成！"
+                                   Foreground="White"
+                                   FontWeight="Medium"
+                                   HorizontalAlignment="Center" />
+                    </Border>
+                </Grid>
+            </ui:Card>
+
+            <!-- 快捷记录区域 -->
+            <TextBlock Text="快捷记录"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+
+            <Grid Margin="0,0,0,16">
+                <ItemsControl ItemsSource="{Binding QuickAmounts}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:Button Content="{Binding StringFormat={}{0} ml}"
+                                       Command="{Binding DataContext.QuickRecordCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                       CommandParameter="{Binding}"
+                                       Appearance="Secondary"
+                                       HorizontalAlignment="Stretch"
+                                       Margin="2,0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!-- 自定义记录按钮 -->
+            <ui:Button Content="+ 自定义"
+                       Command="{Binding OpenCustomDialogCommand}"
+                       Appearance="Transparent"
+                       HorizontalAlignment="Stretch"
+                       Margin="0,0,0,16" />
+
+            <!-- 今日记录列表 -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="今日记录"
+                           FontSize="14"
+                           FontWeight="SemiBold" />
+
+                <TextBlock Grid.Column="2"
+                           Text="{Binding TodayStats.RecordCount, StringFormat=共 {0} 条}"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </Grid>
+
+            <ui:Card>
+                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding TodayStats.Records}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="12,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding FormattedTime}"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="50" />
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding AmountMl, StringFormat={}{0} ml}"
+                                                   FontSize="14"
+                                                   FontWeight="Medium"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0" />
+
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Note}"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   MaxWidth="100" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </ui:Card>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
