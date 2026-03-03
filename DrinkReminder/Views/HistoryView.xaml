@@ -77,7 +77,7 @@
 
                                     <!-- 进度条 -->
                                     <ProgressBar Grid.Column="1"
-                                                 Value="{Binding ProgressPercent}"
+                                                 Value="{Binding ProgressPercent, Mode=OneWay}"
                                                  Maximum="100"
                                                  Height="6"
                                                  Margin="8,0"
