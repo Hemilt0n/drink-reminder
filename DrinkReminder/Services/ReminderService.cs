@@ -11,6 +11,7 @@ public class ReminderService : IDisposable
 {
     private Timer? _timer;
     private readonly AppSettings _settings;
+    private readonly object _timerLock = new();
     private DateTime _lastReminderTime;
     private bool _disposed;
 
@@ -30,6 +31,7 @@ public class ReminderService : IDisposable
     /// </summary>
     public void Start()
     {
+        Stop();
         if (!_settings.ReminderEnabled) return;
 
         // 每分钟检查一次是否需要提醒
@@ -74,22 +76,35 @@ public class ReminderService : IDisposable
     /// </summary>
     private void CheckAndRemind(object? state)
     {
-        if (!_settings.ReminderEnabled) return;
-
-        var now = DateTime.Now;
-
-        // 检查是否在提醒时间段内
-        if (!IsWithinReminderHours(now))
+        if (!Monitor.TryEnter(_timerLock))
         {
             return;
         }
 
-        // 检查是否到了提醒时间
-        var timeSinceLastReminder = now - _lastReminderTime;
-        if (timeSinceLastReminder.TotalMinutes >= _settings.ReminderIntervalMinutes)
+        try
         {
-            SendReminder();
-            _lastReminderTime = now;
+            if (!_settings.ReminderEnabled) return;
+
+            var now = DateTime.Now;
+
+            // 检查是否在提醒时间段内
+            if (!IsWithinReminderHours(now))
+            {
+                return;
+            }
+
+            // 检查是否到了提醒时间
+            var intervalMinutes = Math.Max(1, _settings.ReminderIntervalMinutes);
+            var timeSinceLastReminder = now - _lastReminderTime;
+            if (timeSinceLastReminder.TotalMinutes >= intervalMinutes)
+            {
+                SendReminder();
+                _lastReminderTime = now;
+            }
+        }
+        finally
+        {
+            Monitor.Exit(_timerLock);
         }
     }
 
@@ -99,8 +114,16 @@ public class ReminderService : IDisposable
     private bool IsWithinReminderHours(DateTime time)
     {
         var currentTime = time.TimeOfDay;
-        return currentTime >= _settings.ReminderStartTime &&
-               currentTime <= _settings.ReminderEndTime;
+        var start = _settings.ReminderStartTime;
+        var end = _settings.ReminderEndTime;
+
+        if (start <= end)
+        {
+            return currentTime >= start && currentTime <= end;
+        }
+
+        // 跨午夜时间段，例如 22:00 - 08:00
+        return currentTime >= start || currentTime <= end;
     }
 
     /// <summary>

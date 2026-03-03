@@ -1,6 +1,5 @@
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+using System.Runtime.InteropServices;
 using Hardcodet.Wpf.TaskbarNotification;
 using System.Windows;
 using DrinkReminder.Models;
@@ -13,8 +12,12 @@ namespace DrinkReminder.Services;
 public class TrayService : IDisposable
 {
     private TaskbarIcon? _trayIcon;
+    private Icon? _currentIcon;
     private readonly AppSettings _settings;
     private bool _disposed;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool DestroyIcon(IntPtr hIcon);
 
     /// <summary>
     /// 显示主窗口请求事件
@@ -41,10 +44,11 @@ public class TrayService : IDisposable
     /// </summary>
     public void Initialize()
     {
+        _currentIcon = CreateProgressIcon(0);
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = "喝水提醒小助手",
-            Icon = CreateProgressIcon(0, 100),
+            Icon = _currentIcon,
             ContextMenu = CreateContextMenu()
         };
 
@@ -135,7 +139,10 @@ public class TrayService : IDisposable
         progressPercent = Math.Min(progressPercent, 100);
 
         // 更新图标
-        _trayIcon.Icon = CreateProgressIcon(progressPercent, goalMl);
+        var oldIcon = _currentIcon;
+        _currentIcon = CreateProgressIcon(progressPercent);
+        _trayIcon.Icon = _currentIcon;
+        oldIcon?.Dispose();
 
         // 更新工具提示文本
         _trayIcon.ToolTipText = $"喝水提醒 - {currentMl}/{goalMl} ml ({progressPercent}%)";
@@ -150,7 +157,7 @@ public class TrayService : IDisposable
     /// <summary>
     /// 创建进度图标
     /// </summary>
-    private Icon CreateProgressIcon(int progressPercent, int goalMl)
+    private Icon CreateProgressIcon(int progressPercent)
     {
         const int size = 32;
         using var bitmap = new Bitmap(size, size);
@@ -185,7 +192,15 @@ public class TrayService : IDisposable
 
         // 转换为图标
         var hIcon = bitmap.GetHicon();
-        return Icon.FromHandle(hIcon);
+        try
+        {
+            using var icon = Icon.FromHandle(hIcon);
+            return (Icon)icon.Clone();
+        }
+        finally
+        {
+            DestroyIcon(hIcon);
+        }
     }
 
     /// <summary>
@@ -234,7 +249,7 @@ public class TrayService : IDisposable
 
         // 找到并移除旧的快捷记录项
         var itemsToRemove = _trayIcon.ContextMenu.Items
-            .Cast<System.Windows.Controls.MenuItem>()
+            .OfType<System.Windows.Controls.MenuItem>()
             .Where(item => item.Tag is int)
             .ToList();
 
@@ -263,6 +278,7 @@ public class TrayService : IDisposable
         if (!_disposed)
         {
             _trayIcon?.Dispose();
+            _currentIcon?.Dispose();
             _disposed = true;
         }
     }

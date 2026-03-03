@@ -73,7 +73,7 @@ public partial class SettingsViewModel : ObservableObject
         AutoStart = settings.AutoStart;
         MinimizeToTray = settings.MinimizeToTray;
         CloseToTray = settings.CloseToTray;
-        SelectedTheme = settings.Theme;
+        SelectedTheme = NormalizeTheme(settings.Theme);
 
         QuickRecordButtons.Clear();
         foreach (var amount in settings.QuickRecordButtons)
@@ -98,7 +98,7 @@ public partial class SettingsViewModel : ObservableObject
             AutoStart = AutoStart,
             MinimizeToTray = MinimizeToTray,
             CloseToTray = CloseToTray,
-            Theme = SelectedTheme,
+            Theme = NormalizeTheme(SelectedTheme),
             QuickRecordButtons = QuickRecordButtons.ToList()
         };
 
@@ -183,7 +183,7 @@ public partial class SettingsViewModel : ObservableObject
         AutoStart = defaultSettings.AutoStart;
         MinimizeToTray = defaultSettings.MinimizeToTray;
         CloseToTray = defaultSettings.CloseToTray;
-        SelectedTheme = defaultSettings.Theme;
+        SelectedTheme = NormalizeTheme(defaultSettings.Theme);
         QuickRecordButtons.Clear();
         foreach (var amount in defaultSettings.QuickRecordButtons)
         {
@@ -191,5 +191,15 @@ public partial class SettingsViewModel : ObservableObject
         }
 
         SaveSettings();
+    }
+
+    private static string NormalizeTheme(string? theme)
+    {
+        return theme?.Trim().ToLowerInvariant() switch
+        {
+            "light" => "light",
+            "dark" => "dark",
+            _ => "system"
+        };
     }
 }

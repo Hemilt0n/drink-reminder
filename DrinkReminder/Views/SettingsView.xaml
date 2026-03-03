@@ -91,7 +91,8 @@
                                    Text="开始: "
                                    VerticalAlignment="Center" />
                         <ComboBox Grid.Column="1"
-                                  SelectedItem="{Binding ReminderStartTime}"
+                                  SelectedValue="{Binding ReminderStartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="Content"
                                   HorizontalAlignment="Stretch"
                                   Margin="0,0,8,0">
                             <ComboBoxItem Content="06:00" />
@@ -105,7 +106,8 @@
                                    Text="结束: "
                                    VerticalAlignment="Center" />
                         <ComboBox Grid.Column="3"
-                                  SelectedItem="{Binding ReminderEndTime}"
+                                  SelectedValue="{Binding ReminderEndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="Content"
                                   HorizontalAlignment="Stretch">
                             <ComboBoxItem Content="20:00" />
                             <ComboBoxItem Content="21:00" />
@@ -198,7 +200,9 @@
                              Margin="0,0,0,8"
                              Icon="Color24">
                 <StackPanel Margin="24,8,24,16">
-                    <ComboBox SelectedItem="{Binding SelectedTheme}" HorizontalAlignment="Stretch">
+                    <ComboBox SelectedValue="{Binding SelectedTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedValuePath="Tag"
+                              HorizontalAlignment="Stretch">
                         <ComboBoxItem Content="跟随系统" Tag="system" />
                         <ComboBoxItem Content="浅色主题" Tag="light" />
                         <ComboBoxItem Content="深色主题" Tag="dark" />

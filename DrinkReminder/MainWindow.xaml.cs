@@ -8,7 +8,7 @@ namespace DrinkReminder;
 /// </summary>
 public partial class MainWindow : FluentWindow
 {
-    private readonly MainViewModel? _viewModel;
+    private MainViewModel? ViewModel => DataContext as MainViewModel;
     private bool _isReallyClosing;
 
     public MainWindow()
@@ -18,16 +18,24 @@ public partial class MainWindow : FluentWindow
 
     public MainWindow(MainViewModel viewModel) : this()
     {
-        _viewModel = viewModel;
         DataContext = viewModel;
     }
 
     private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        var settings = _viewModel?.Settings;
+        var settings = ViewModel?.Settings;
         if (settings?.CloseToTray == true && !_isReallyClosing)
         {
             e.Cancel = true;
+            Hide();
+        }
+    }
+
+    private void OnWindowStateChanged(object sender, EventArgs e)
+    {
+        var settings = ViewModel?.Settings;
+        if (settings?.MinimizeToTray == true && WindowState == System.Windows.WindowState.Minimized)
+        {
             Hide();
         }
     }

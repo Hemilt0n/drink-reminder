@@ -1,8 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DrinkReminder.Helpers;
 using DrinkReminder.Models;
 using DrinkReminder.Services;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace DrinkReminder.ViewModels;
 
@@ -39,6 +41,8 @@ public partial class MainViewModel : ObservableObject
 
         // 加载设置
         Settings = _databaseService.GetSettings();
+        ThemeHelper.ApplyTheme(Settings.Theme);
+        AutoStartHelper.UpdateAutoStart(Settings.AutoStart);
 
         // 初始化子视图模型
         HomeViewModel = new HomeViewModel(databaseService, this);
@@ -118,9 +122,13 @@ public partial class MainViewModel : ObservableObject
     {
         _databaseService.SaveSettings(newSettings);
         Settings = newSettings;
+        AutoStartHelper.UpdateAutoStart(newSettings.AutoStart);
+        ThemeHelper.ApplyTheme(newSettings.Theme);
         _reminderService.UpdateSettings(newSettings);
         _trayService.UpdateProgress(TodayStats.TotalMl, Settings.DailyGoalMl);
         _trayService.UpdateQuickRecordMenu(newSettings.QuickRecordButtons);
+        HomeViewModel.RefreshData();
+        HistoryViewModel.RefreshData();
     }
 
     private void OnQuickRecord(int amountMl)
@@ -142,7 +150,14 @@ public partial class MainViewModel : ObservableObject
 
     private void OnReminderTriggered(object? sender, ReminderEventArgs e)
     {
-        _trayService.ShowBalloonTip("💧 喝水提醒", e.Message);
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher == null || dispatcher.CheckAccess())
+        {
+            _trayService.ShowBalloonTip("💧 喝水提醒", e.Message);
+            return;
+        }
+
+        dispatcher.Invoke(() => _trayService.ShowBalloonTip("💧 喝水提醒", e.Message));
     }
 
     /// <summary>

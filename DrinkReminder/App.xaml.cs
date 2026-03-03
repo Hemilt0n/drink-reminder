@@ -1,5 +1,6 @@
 using DrinkReminder.Services;
 using DrinkReminder.ViewModels;
+using DrinkReminder.Helpers;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -26,6 +27,7 @@ public partial class App : Application
 
         _trayService = new TrayService(settings);
         _reminderService = new ReminderService(settings);
+        ThemeHelper.ApplyTheme(settings.Theme);
 
         // 初始化 ViewModel
         _mainViewModel = new MainViewModel(_databaseService, _trayService, _reminderService);
@@ -41,10 +43,7 @@ public partial class App : Application
         _reminderService.Start();
 
         // 创建主窗口
-        _mainWindow = new MainWindow
-        {
-            DataContext = _mainViewModel
-        };
+        _mainWindow = new MainWindow(_mainViewModel);
 
         // 根据设置决定是否显示主窗口
         if (!e.Args.Contains("--minimized"))
@@ -65,7 +64,7 @@ public partial class App : Application
 
     private void ExitApplication()
     {
-        _mainWindow?.Close();
+        _mainWindow?.ReallyClose();
         Current.Shutdown();
     }
 

@@ -14,7 +14,8 @@
                   WindowStartupLocation="CenterScreen"
                   Background="{DynamicResource ApplicationBackgroundBrush}"
                   ExtendsContentIntoTitleBar="True"
-                  Closing="OnWindowClosing">
+                  Closing="OnWindowClosing"
+                  StateChanged="OnWindowStateChanged">
 
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
