@@ -1,12 +1,12 @@
 using DrinkReminder.ViewModels;
-using System.Windows;
+using Wpf.Ui;
 
 namespace DrinkReminder;
 
 /// <summary>
 /// MainWindow.xaml 的交互逻辑
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
     private readonly MainViewModel? _viewModel;
     private bool _isReallyClosing;
