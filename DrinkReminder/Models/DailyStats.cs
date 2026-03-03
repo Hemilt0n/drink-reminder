@@ -53,15 +53,15 @@ public class DailyStats
     /// <summary>
     /// 星期几显示
     /// </summary>
-    public string DayOfWeek => Date.DayOfWeek switch
+    public string WeekDay => Date.DayOfWeek switch
     {
-        DayOfWeek.Monday => "周一",
-        DayOfWeek.Tuesday => "周二",
-        DayOfWeek.Wednesday => "周三",
-        DayOfWeek.Thursday => "周四",
-        DayOfWeek.Friday => "周五",
-        DayOfWeek.Saturday => "周六",
-        DayOfWeek.Sunday => "周日",
+        System.DayOfWeek.Monday => "周一",
+        System.DayOfWeek.Tuesday => "周二",
+        System.DayOfWeek.Wednesday => "周三",
+        System.DayOfWeek.Thursday => "周四",
+        System.DayOfWeek.Friday => "周五",
+        System.DayOfWeek.Saturday => "周六",
+        System.DayOfWeek.Sunday => "周日",
         _ => ""
     };
 }

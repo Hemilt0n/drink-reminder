@@ -71,7 +71,7 @@
                                     <!-- 日期 -->
                                     <StackPanel Grid.Column="0" Margin="0,0,12,0">
                                         <TextBlock Text="{Binding FormattedDate}" FontSize="14" FontWeight="Medium" />
-                                        <TextBlock Text="{Binding DayOfWeek}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                        <TextBlock Text="{Binding WeekDay}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                     </StackPanel>
 
                                     <!-- 进度条 -->

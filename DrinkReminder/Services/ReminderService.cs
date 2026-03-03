@@ -125,7 +125,7 @@ public class ReminderService : IDisposable
     {
         try
         {
-            new ToastContentBuilder()
+            var toast = new ToastContentBuilder()
                 .AddText("💧 喝水提醒")
                 .AddText("该喝水啦！保持水分充足对身体很重要哦～")
                 .AddButton(new ToastButton()
@@ -135,8 +135,9 @@ public class ReminderService : IDisposable
                 .AddButton(new ToastButton()
                     .SetContent("稍后提醒")
                     .AddArgument("action", "snooze"))
-                .AddArgument("action", "reminder")
-                .Show();
+                .AddArgument("action", "reminder");
+
+            toast.Show();
         }
         catch (Exception ex)
         {

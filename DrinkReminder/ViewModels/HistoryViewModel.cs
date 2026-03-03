@@ -111,7 +111,7 @@ public partial class HistoryViewModel : ObservableObject
 
         // 更新 X 轴标签
         var labels = orderedStats
-            .Select(s => $"{s.FormattedDate}\n{s.DayOfWeek}")
+            .Select(s => $"{s.FormattedDate}\n{s.WeekDay}")
             .ToArray();
 
         XAxes = new ObservableCollection<Axis>
