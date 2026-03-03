@@ -1,5 +1,6 @@
 using DrinkReminder.Models;
 using CommunityToolkit.WinUI.Notifications;
+using Windows.UI.Notifications;
 
 namespace DrinkReminder.Services;
 
@@ -125,7 +126,7 @@ public class ReminderService : IDisposable
     {
         try
         {
-            var toast = new ToastContentBuilder()
+            var toastContent = new ToastContentBuilder()
                 .AddText("💧 喝水提醒")
                 .AddText("该喝水啦！保持水分充足对身体很重要哦～")
                 .AddButton(new ToastButton()
@@ -135,9 +136,12 @@ public class ReminderService : IDisposable
                 .AddButton(new ToastButton()
                     .SetContent("稍后提醒")
                     .AddArgument("action", "snooze"))
-                .AddArgument("action", "reminder");
+                .AddArgument("action", "reminder")
+                .GetToastContent();
 
-            toast.Show();
+            var notification = new ToastNotification(toastContent.GetXml());
+            var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
+            notifier.Show(notification);
         }
         catch (Exception ex)
         {

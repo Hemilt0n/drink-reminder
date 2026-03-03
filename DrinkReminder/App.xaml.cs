@@ -15,7 +15,6 @@ public partial class App : Application
     private ReminderService? _reminderService;
     private MainViewModel? _mainViewModel;
     private MainWindow? _mainWindow;
-    private bool _isExiting;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -66,7 +65,6 @@ public partial class App : Application
 
     private void ExitApplication()
     {
-        _isExiting = true;
         _mainWindow?.Close();
         Current.Shutdown();
     }

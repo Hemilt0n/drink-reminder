@@ -39,7 +39,7 @@ public partial class SettingsViewModel : ObservableObject
     private bool _closeToTray;
 
     [ObservableProperty]
-    private string _selectedTheme;
+    private string _selectedTheme = "system";
 
     [ObservableProperty]
     private ObservableCollection<int> _quickRecordButtons = new();
