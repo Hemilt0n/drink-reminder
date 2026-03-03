@@ -57,9 +57,10 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ui:Card Margin="0,0,0,8" Padding="12">
-                            <Button Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"
-                                    Style="{StaticResource {x:Static ui:ControlsDictionary.TransparentButtonStyleKey}}">
+                            <ui:Button Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                       CommandParameter="{Binding}"
+                                       Appearance="Transparent"
+                                       Padding="0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -98,7 +99,7 @@
                                                    Visibility="{Binding IsGoalMet, Converter={StaticResource BoolToVisibilityConverter}}"
                                                    VerticalAlignment="Center" />
                                 </Grid>
-                            </Button>
+                            </ui:Button>
                         </ui:Card>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
