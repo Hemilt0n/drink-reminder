@@ -32,9 +32,7 @@
                      Title="💧 喝水提醒"
                      ShowMinimize="True"
                      ShowMaximize="False"
-                     ShowClose="True"
-                     MinimizeClick="OnMinimizeClick"
-                     CloseClick="OnCloseClick" />
+                     ShowClose="True" />
 
         <!-- 主内容区域 -->
         <ContentControl Grid.Row="1"

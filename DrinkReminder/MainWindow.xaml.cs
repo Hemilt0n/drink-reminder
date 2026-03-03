@@ -9,6 +9,7 @@ namespace DrinkReminder;
 public partial class MainWindow : Window
 {
     private readonly MainViewModel? _viewModel;
+    private bool _isReallyClosing;
 
     public MainWindow()
     {
@@ -21,32 +22,6 @@ public partial class MainWindow : Window
         DataContext = viewModel;
     }
 
-    private void OnMinimizeClick(object sender, RoutedEventArgs e)
-    {
-        var settings = _viewModel?.Settings;
-        if (settings?.MinimizeToTray == true)
-        {
-            Hide();
-        }
-        else
-        {
-            WindowState = WindowState.Minimized;
-        }
-    }
-
-    private void OnCloseClick(object sender, RoutedEventArgs e)
-    {
-        var settings = _viewModel?.Settings;
-        if (settings?.CloseToTray == true)
-        {
-            Hide();
-        }
-        else
-        {
-            Close();
-        }
-    }
-
     private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         var settings = _viewModel?.Settings;
@@ -56,8 +31,6 @@ public partial class MainWindow : Window
             Hide();
         }
     }
-
-    private bool _isReallyClosing = false;
 
     public void ReallyClose()
     {
