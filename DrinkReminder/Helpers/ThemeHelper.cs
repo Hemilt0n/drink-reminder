@@ -1,3 +1,5 @@
+using Wpf.Ui.Appearance;
+
 namespace DrinkReminder.Helpers;
 
 /// <summary>
@@ -13,18 +15,18 @@ public static class ThemeHelper
     {
         var actualTheme = theme.ToLower() switch
         {
-            "light" => Wpf.Ui.ApplicationTheme.Light,
-            "dark" => Wpf.Ui.ApplicationTheme.Dark,
+            "light" => ApplicationTheme.Light,
+            "dark" => ApplicationTheme.Dark,
             _ => GetSystemTheme() // system 或默认跟随系统
         };
 
-        Wpf.Ui.ApplicationThemeManager.Apply(actualTheme);
+        ApplicationThemeManager.Apply(actualTheme);
     }
 
     /// <summary>
     /// 获取系统当前主题
     /// </summary>
-    private static Wpf.Ui.ApplicationTheme GetSystemTheme()
+    private static ApplicationTheme GetSystemTheme()
     {
         // Windows 10/11 系统主题检测
         try
@@ -34,7 +36,7 @@ public static class ThemeHelper
 
             if (key?.GetValue("AppsUseLightTheme") is int value)
             {
-                return value == 0 ? Wpf.Ui.ApplicationTheme.Dark : Wpf.Ui.ApplicationTheme.Light;
+                return value == 0 ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
         }
         catch
@@ -42,14 +44,14 @@ public static class ThemeHelper
             // 无法读取注册表时默认使用浅色主题
         }
 
-        return Wpf.Ui.ApplicationTheme.Light;
+        return ApplicationTheme.Light;
     }
 
     /// <summary>
     /// 获取当前应用主题
     /// </summary>
-    public static Wpf.Ui.ApplicationTheme GetCurrentTheme()
+    public static ApplicationTheme GetCurrentTheme()
     {
-        return Wpf.Ui.ApplicationThemeManager.GetAppTheme();
+        return ApplicationThemeManager.GetAppTheme();
     }
 }

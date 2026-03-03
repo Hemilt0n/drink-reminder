@@ -1,5 +1,5 @@
 using DrinkReminder.ViewModels;
-using Wpf.Ui;
+using Wpf.Ui.Controls;
 
 namespace DrinkReminder;
 
