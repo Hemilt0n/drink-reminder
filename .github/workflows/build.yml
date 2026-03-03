@@ -57,17 +57,21 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Publish Windows x64
-      run: dotnet publish DrinkReminder/DrinkReminder.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o ./publish/win-x64
+      run: |
+        dotnet publish DrinkReminder/DrinkReminder.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o ./publish/win-x64
+        Rename-Item -Path "./publish/win-x64/DrinkReminder.exe" -NewName "DrinkReminder-win-x64.exe"
 
     - name: Publish Windows x86
-      run: dotnet publish DrinkReminder/DrinkReminder.csproj -c Release -r win-x86 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o ./publish/win-x86
+      run: |
+        dotnet publish DrinkReminder/DrinkReminder.csproj -c Release -r win-x86 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o ./publish/win-x86
+        Rename-Item -Path "./publish/win-x86/DrinkReminder.exe" -NewName "DrinkReminder-win-x86.exe"
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./publish/win-x64/*.exe
-          ./publish/win-x86/*.exe
+          ./publish/win-x64/DrinkReminder-win-x64.exe
+          ./publish/win-x86/DrinkReminder-win-x86.exe
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
