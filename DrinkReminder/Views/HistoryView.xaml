@@ -15,136 +15,158 @@
         <converters:SelectedDaysToAppearanceConverter x:Key="SelectedDaysToAppearanceConverter" />
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="16,8,16,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- 时间范围选择 -->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Margin="16,8,16,8">
-            <ui:Button Content="7天"
-                       Command="{Binding Show7DaysCommand}"
-                       Appearance="Transparent"
-                       Margin="0,0,8,0" />
-            <ui:Button Content="14天"
-                       Command="{Binding Show14DaysCommand}"
-                       Appearance="Transparent"
-                       Margin="0,0,8,0" />
-            <ui:Button Content="30天"
-                       Command="{Binding Show30DaysCommand}"
-                       Appearance="Transparent" />
-        </StackPanel>
+        <Border Grid.Row="0"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="10"
+                Margin="0,0,0,10">
+            <UniformGrid Columns="3">
+                <ui:Button Content="7 天"
+                           Command="{Binding Show7DaysCommand}"
+                           Appearance="{Binding SelectedDays, Converter={StaticResource SelectedDaysToAppearanceConverter}, ConverterParameter=7}"
+                           Margin="3,0" />
+                <ui:Button Content="14 天"
+                           Command="{Binding Show14DaysCommand}"
+                           Appearance="{Binding SelectedDays, Converter={StaticResource SelectedDaysToAppearanceConverter}, ConverterParameter=14}"
+                           Margin="3,0" />
+                <ui:Button Content="30 天"
+                           Command="{Binding Show30DaysCommand}"
+                           Appearance="{Binding SelectedDays, Converter={StaticResource SelectedDaysToAppearanceConverter}, ConverterParameter=30}"
+                           Margin="3,0" />
+            </UniformGrid>
+        </Border>
 
-        <!-- 统计图表 -->
-        <ui:Card Grid.Row="1"
-                 Margin="16,0,16,16"
-                 Padding="16">
-            <lvc:CartesianChart Series="{Binding ChartSeries}"
-                                XAxes="{Binding XAxes}"
-                                Height="200"
-                                Background="Transparent" />
+        <ui:Card Grid.Row="1" Margin="0,0,0,10" Padding="14">
+            <StackPanel>
+                <TextBlock Text="摄入趋势"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <lvc:CartesianChart Series="{Binding ChartSeries}"
+                                    XAxes="{Binding XAxes}"
+                                    YAxes="{Binding YAxes}"
+                                    Height="210"
+                                    Background="Transparent" />
+            </StackPanel>
         </ui:Card>
 
-        <!-- 历史列表 -->
-        <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Auto"
-                      Margin="16,0,16,8">
-            <ItemsControl ItemsSource="{Binding WeeklyStats}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ui:Card Margin="0,0,0,8" Padding="12">
+        <Border Grid.Row="2"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding WeeklyStats}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
                             <ui:Button Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                        CommandParameter="{Binding}"
                                        Appearance="Transparent"
-                                       Padding="0">
+                                       Padding="10"
+                                       Margin="0,0,0,6"
+                                       HorizontalContentAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="80" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- 日期 -->
-                                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                        <TextBlock Text="{Binding FormattedDate}" FontSize="14" FontWeight="Medium" />
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding FormattedDate}" FontWeight="SemiBold" />
                                         <TextBlock Text="{Binding WeekDay}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                     </StackPanel>
 
-                                    <!-- 进度条 -->
                                     <ProgressBar Grid.Column="1"
                                                  Value="{Binding ProgressPercent, Mode=OneWay}"
                                                  Maximum="100"
-                                                 Height="6"
-                                                 Margin="8,0"
+                                                 Height="7"
+                                                 Margin="10,0"
                                                  VerticalAlignment="Center"
-                                                 Foreground="#2196F3" />
+                                                 Foreground="#FF2F80ED" />
 
-                                    <!-- 饮水量 -->
                                     <TextBlock Grid.Column="2"
                                                Text="{Binding TotalMl, StringFormat={}{0} ml}"
-                                               FontSize="13"
-                                               VerticalAlignment="Center"
-                                               Margin="8,0" />
+                                               Margin="8,0"
+                                               VerticalAlignment="Center" />
 
-                                    <!-- 状态图标 -->
                                     <ui:SymbolIcon Grid.Column="3"
                                                    Symbol="CheckmarkCircle24"
                                                    FontSize="16"
-                                                   Foreground="#4CAF50"
+                                                   Foreground="#FF43A047"
                                                    Visibility="{Binding IsGoalMet, Converter={StaticResource BoolToVisibilityConverter}}"
                                                    VerticalAlignment="Center" />
                                 </Grid>
                             </ui:Button>
-                        </ui:Card>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
 
-        <!-- 日期详情弹窗 -->
-        <Grid Visibility="{Binding ShowDayDetail, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Background="#80000000" Panel.ZIndex="100" />
+        <Grid Visibility="{Binding ShowDayDetail, Converter={StaticResource BoolToVisibilityConverter}}"
+              Panel.ZIndex="100">
+            <Border Background="#7A000000" />
             <ui:Card HorizontalAlignment="Center"
                      VerticalAlignment="Center"
-                     Width="320"
-                     MaxHeight="400"
-                     Panel.ZIndex="101">
-                <StackPanel Margin="16">
-                    <Grid Margin="0,0,0,12">
-                        <TextBlock Text="{Binding SelectedDayStats.FormattedDate, StringFormat={}{0} 饮水记录}"
+                     Width="330"
+                     MaxHeight="420"
+                     Padding="16">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,12">
+                        <TextBlock DockPanel.Dock="Left"
+                                   Text="{Binding SelectedDayStats.FormattedDate, StringFormat={}{0} 饮水详情}"
                                    FontSize="16"
                                    FontWeight="SemiBold" />
-                        <ui:Button Content="✕"
+                        <ui:Button DockPanel.Dock="Right"
+                                   Content="关闭"
                                    Command="{Binding CloseDayDetailCommand}"
-                                   Appearance="Transparent"
-                                   HorizontalAlignment="Right"
-                                   Padding="4" />
-                    </Grid>
+                                   Appearance="Transparent" />
+                    </DockPanel>
 
-                    <TextBlock Text="{Binding SelectedDayStats.TotalMl, StringFormat=总计: {0} ml}"
-                               FontSize="14"
-                               Margin="0,0,0,8" />
+                    <Border Background="{DynamicResource ApplicationBackgroundBrush}"
+                            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="10"
+                            Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="总摄入" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                <TextBlock Text="{Binding SelectedDayStats.TotalMl, StringFormat={}{0} ml}" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="完成度" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                <TextBlock Text="{Binding SelectedDayStats.ProgressPercent, StringFormat={}{0}%}" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
-                    <TextBlock Text="{Binding SelectedDayStats.ProgressPercent, StringFormat=完成度: {0}%}"
-                               FontSize="14"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Margin="0,0,0,12" />
-
-                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto">
                         <ItemsControl ItemsSource="{Binding SelectedDayStats.Records}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}"
                                             BorderThickness="0,0,0,1"
-                                            Padding="8,6">
+                                            Padding="6,6">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="46" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
@@ -152,12 +174,11 @@
                                             <TextBlock Grid.Column="0"
                                                        Text="{Binding FormattedTime}"
                                                        FontSize="12"
-                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                       Width="45" />
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
                                             <TextBlock Grid.Column="1"
                                                        Text="{Binding AmountMl, StringFormat={}{0} ml}"
-                                                       FontSize="13"
+                                                       FontWeight="SemiBold"
                                                        Margin="4,0" />
 
                                             <TextBlock Grid.Column="2"
@@ -175,3 +196,4 @@
         </Grid>
     </Grid>
 </UserControl>
+

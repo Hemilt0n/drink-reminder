@@ -6,11 +6,11 @@
                   xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                   xmlns:converters="clr-namespace:DrinkReminder.Converters"
                   mc:Ignorable="d"
-                  Title="喝水提醒小助手"
-                  Height="600"
-                  Width="400"
-                  MinHeight="500"
-                  MinWidth="350"
+                  Title="Drink Reminder"
+                  Height="640"
+                  Width="420"
+                  MinHeight="540"
+                  MinWidth="360"
                   WindowStartupLocation="CenterScreen"
                   Background="{DynamicResource ApplicationBackgroundBrush}"
                   ExtendsContentIntoTitleBar="True"
@@ -19,76 +19,82 @@
 
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:CurrentViewTitleToAppearanceConverter x:Key="CurrentViewTitleToAppearanceConverter" />
     </Window.Resources>
 
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FFF4FAFF" Offset="0" />
+                <GradientStop Color="#FFF7FBF8" Offset="0.55" />
+                <GradientStop Color="#FFEFF6FF" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0"
-                     Title="💧 喝水提醒"
+                     Margin="8,6,8,0"
+                     Title="HydraPulse"
                      ShowMinimize="True"
                      ShowMaximize="False"
                      ShowClose="True" />
 
-        <!-- 主内容区域 -->
-        <ContentControl Grid.Row="1"
-                        Content="{Binding CurrentView}"
-                        Margin="0,8,0,0" />
-
-        <!-- 底部导航栏 -->
-        <Border Grid.Row="2"
+        <Border Grid.Row="1"
+                Margin="12,8,12,8"
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource ControlElevationBorderBrush}"
-                BorderThickness="0,1,0,0"
-                Padding="8">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                BorderThickness="1"
+                CornerRadius="18">
+            <ContentControl Content="{Binding CurrentView}" Margin="0,6,0,0" />
+        </Border>
 
-                <!-- 首页按钮 -->
-                <ui:Button Grid.Column="0"
-                           Command="{Binding NavigateToHomeCommand}"
-                           Appearance="Transparent"
+        <Border Grid.Row="2"
+                Margin="12,0,12,12"
+                Padding="8"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="16">
+            <UniformGrid Columns="3">
+                <ui:Button Command="{Binding NavigateToHomeCommand}"
+                           Appearance="{Binding CurrentViewTitle, Converter={StaticResource CurrentViewTitleToAppearanceConverter}, ConverterParameter=首页}"
                            HorizontalAlignment="Stretch"
-                           Padding="12,8">
+                           Padding="12,8"
+                           Margin="2,0">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <ui:SymbolIcon Symbol="Home24" FontSize="20" />
-                        <TextBlock Text="首页" FontSize="12" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                        <ui:SymbolIcon Symbol="Home24" FontSize="18" />
+                        <TextBlock Text="首页" FontSize="12" HorizontalAlignment="Center" Margin="0,3,0,0" />
                     </StackPanel>
                 </ui:Button>
 
-                <!-- 统计按钮 -->
-                <ui:Button Grid.Column="1"
-                           Command="{Binding NavigateToHistoryCommand}"
-                           Appearance="Transparent"
+                <ui:Button Command="{Binding NavigateToHistoryCommand}"
+                           Appearance="{Binding CurrentViewTitle, Converter={StaticResource CurrentViewTitleToAppearanceConverter}, ConverterParameter=统计}"
                            HorizontalAlignment="Stretch"
-                           Padding="12,8">
+                           Padding="12,8"
+                           Margin="2,0">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <ui:SymbolIcon Symbol="DataHistogram24" FontSize="20" />
-                        <TextBlock Text="统计" FontSize="12" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                        <ui:SymbolIcon Symbol="DataHistogram24" FontSize="18" />
+                        <TextBlock Text="统计" FontSize="12" HorizontalAlignment="Center" Margin="0,3,0,0" />
                     </StackPanel>
                 </ui:Button>
 
-                <!-- 设置按钮 -->
-                <ui:Button Grid.Column="2"
-                           Command="{Binding NavigateToSettingsCommand}"
-                           Appearance="Transparent"
+                <ui:Button Command="{Binding NavigateToSettingsCommand}"
+                           Appearance="{Binding CurrentViewTitle, Converter={StaticResource CurrentViewTitleToAppearanceConverter}, ConverterParameter=设置}"
                            HorizontalAlignment="Stretch"
-                           Padding="12,8">
+                           Padding="12,8"
+                           Margin="2,0">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <ui:SymbolIcon Symbol="Settings24" FontSize="20" />
-                        <TextBlock Text="设置" FontSize="12" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                        <ui:SymbolIcon Symbol="Settings24" FontSize="18" />
+                        <TextBlock Text="设置" FontSize="12" HorizontalAlignment="Center" Margin="0,3,0,0" />
                     </StackPanel>
                 </ui:Button>
-            </Grid>
+            </UniformGrid>
         </Border>
     </Grid>
 </ui:FluentWindow>
+

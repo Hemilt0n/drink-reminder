@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace DrinkReminder.ViewModels;
 
 /// <summary>
-/// 设置视图模型
+/// Settings view model.
 /// </summary>
 public partial class SettingsViewModel : ObservableObject
 {
@@ -45,10 +45,13 @@ public partial class SettingsViewModel : ObservableObject
     private ObservableCollection<int> _quickRecordButtons = new();
 
     [ObservableProperty]
-    private int _newQuickAmount = 100;
+    private int _newQuickAmount = 200;
 
     [ObservableProperty]
     private bool _showAddQuickButtonDialog;
+
+    public IReadOnlyList<TimeSpan> ReminderTimeOptions { get; } =
+        Enumerable.Range(0, 24).Select(h => new TimeSpan(h, 0, 0)).ToList();
 
     public SettingsViewModel(DatabaseService databaseService, MainViewModel mainViewModel)
     {
@@ -59,7 +62,7 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// 加载设置
+    /// Load settings from model.
     /// </summary>
     public void LoadSettings()
     {
@@ -76,22 +79,28 @@ public partial class SettingsViewModel : ObservableObject
         SelectedTheme = NormalizeTheme(settings.Theme);
 
         QuickRecordButtons.Clear();
-        foreach (var amount in settings.QuickRecordButtons)
+        foreach (var amount in settings.QuickRecordButtons.OrderBy(x => x))
         {
             QuickRecordButtons.Add(amount);
         }
     }
 
     /// <summary>
-    /// 保存设置
+    /// Persist settings.
     /// </summary>
     [RelayCommand]
     private void SaveSettings()
     {
+        var sanitizedButtons = QuickRecordButtons
+            .Where(x => x > 0)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+
         var settings = new AppSettings
         {
-            DailyGoalMl = DailyGoalMl,
-            ReminderIntervalMinutes = ReminderIntervalMinutes,
+            DailyGoalMl = Math.Clamp(DailyGoalMl, 500, 5000),
+            ReminderIntervalMinutes = Math.Clamp(ReminderIntervalMinutes, 5, 120),
             ReminderEnabled = ReminderEnabled,
             ReminderStartTime = ReminderStartTime,
             ReminderEndTime = ReminderEndTime,
@@ -99,24 +108,24 @@ public partial class SettingsViewModel : ObservableObject
             MinimizeToTray = MinimizeToTray,
             CloseToTray = CloseToTray,
             Theme = NormalizeTheme(SelectedTheme),
-            QuickRecordButtons = QuickRecordButtons.ToList()
+            QuickRecordButtons = sanitizedButtons
         };
 
         _mainViewModel.UpdateSettings(settings);
     }
 
     /// <summary>
-    /// 添加快捷记录按钮
+    /// Open add quick button dialog.
     /// </summary>
     [RelayCommand]
     private void AddQuickRecordButton()
     {
-        NewQuickAmount = 100;
+        NewQuickAmount = 200;
         ShowAddQuickButtonDialog = true;
     }
 
     /// <summary>
-    /// 确认添加快捷按钮
+    /// Confirm add quick button.
     /// </summary>
     [RelayCommand]
     private void ConfirmAddQuickButton()
@@ -126,11 +135,12 @@ public partial class SettingsViewModel : ObservableObject
             QuickRecordButtons.Add(NewQuickAmount);
             SaveSettings();
         }
+
         ShowAddQuickButtonDialog = false;
     }
 
     /// <summary>
-    /// 取消添加快捷按钮
+    /// Cancel add quick button.
     /// </summary>
     [RelayCommand]
     private void CancelAddQuickButton()
@@ -139,7 +149,7 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// 删除快捷记录按钮
+    /// Remove quick button.
     /// </summary>
     [RelayCommand]
     private void RemoveQuickRecordButton(int amount)
@@ -149,27 +159,28 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// 清除所有数据
+    /// Clear all drink records.
     /// </summary>
     [RelayCommand]
     private void ClearAllData()
     {
-        // TODO: 显示确认对话框
         _databaseService.ClearAllData();
         _mainViewModel.RefreshTodayStats();
+        _mainViewModel.HomeViewModel.RefreshData();
+        _mainViewModel.HistoryViewModel.RefreshData();
     }
 
     /// <summary>
-    /// 导出数据
+    /// Export records.
     /// </summary>
     [RelayCommand]
     private void ExportData()
     {
-        // TODO: 实现 CSV 导出
+        // TODO: CSV export.
     }
 
     /// <summary>
-    /// 重置为默认设置
+    /// Reset settings to defaults.
     /// </summary>
     [RelayCommand]
     private void ResetToDefault()
@@ -184,8 +195,9 @@ public partial class SettingsViewModel : ObservableObject
         MinimizeToTray = defaultSettings.MinimizeToTray;
         CloseToTray = defaultSettings.CloseToTray;
         SelectedTheme = NormalizeTheme(defaultSettings.Theme);
+
         QuickRecordButtons.Clear();
-        foreach (var amount in defaultSettings.QuickRecordButtons)
+        foreach (var amount in defaultSettings.QuickRecordButtons.OrderBy(x => x))
         {
             QuickRecordButtons.Add(amount);
         }
@@ -203,3 +215,4 @@ public partial class SettingsViewModel : ObservableObject
         };
     }
 }
+

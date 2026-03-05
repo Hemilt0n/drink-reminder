@@ -14,186 +14,224 @@
         <converters:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="16,8">
-            <!-- 进度环区域 -->
-            <ui:Card Margin="0,0,0,16">
-                <Grid Margin="24,16">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="16,8,16,16">
+                <ui:Card Margin="0,0,0,14" Padding="0">
+                    <Border CornerRadius="14" Padding="18">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FF2790FF" Offset="0" />
+                                <GradientStop Color="#FF1E6EEB" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
 
-                    <!-- 进度环 -->
-                    <Grid Grid.Row="0"
-                          Width="180"
-                          Height="180"
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,16">
-                        <!-- 背景圆环 -->
-                        <Ellipse Stroke="{DynamicResource ControlElevationBorderBrush}"
-                                 StrokeThickness="12"
-                                 Fill="Transparent" />
+                        <StackPanel>
+                            <TextBlock Text="今日饮水"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Opacity="0.9" />
 
-                        <!-- 进度弧线使用 Arc -->
-                        <Path Stroke="#2196F3"
-                              StrokeThickness="12"
-                              Fill="Transparent"
-                              Stretch="None"
-                              StrokeStartLineCap="Round"
-                              StrokeEndLineCap="Round">
-                            <Path.Data>
-                                <PathGeometry>
-                                    <PathGeometry.Figures>
-                                        <PathFigureCollection>
-                                            <PathFigure StartPoint="90,16">
-                                                <PathFigure.Segments>
-                                                    <PathSegmentCollection>
-                                                        <ArcSegment x:Name="ProgressArc"
-                                                                    Point="90,16"
-                                                                    Size="74,74"
-                                                                    IsLargeArc="False"
-                                                                    SweepDirection="Clockwise" />
-                                                    </PathSegmentCollection>
-                                                </PathFigure.Segments>
-                                            </PathFigure>
-                                        </PathFigureCollection>
-                                    </PathGeometry.Figures>
-                                </PathGeometry>
-                            </Path.Data>
-                        </Path>
+                            <DockPanel Margin="0,8,0,6">
+                                <StackPanel DockPanel.Dock="Left">
+                                    <TextBlock Text="{Binding TodayStats.TotalMl, StringFormat={}{0} ml}"
+                                               Foreground="White"
+                                               FontWeight="Bold"
+                                               FontSize="30" />
+                                    <TextBlock Text="{Binding TodayStats.GoalMl, StringFormat=目标 {0} ml}"
+                                               Foreground="White"
+                                               Opacity="0.9"
+                                               FontSize="12" />
+                                </StackPanel>
 
-                        <!-- 中心内容 -->
-                        <StackPanel VerticalAlignment="Center"
-                                    HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding TodayStats.TotalMl, StringFormat={}{0} ml}"
-                                       FontSize="28"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding TodayStats.ProgressPercent, StringFormat={}{0}%}"
-                                       FontSize="18"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding TodayStats.GoalMl, StringFormat=目标 {0} ml}"
-                                       FontSize="12"
-                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,4,0,0" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- 完成提示 -->
-                    <Border Grid.Row="1"
-                            Background="#4CAF50"
-                            CornerRadius="4"
-                            Padding="12,6"
-                            HorizontalAlignment="Center"
-                            Visibility="{Binding TodayStats.IsGoalMet, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock Text="🎉 今日目标已达成！"
-                                   Foreground="White"
-                                   FontWeight="Medium"
-                                   HorizontalAlignment="Center" />
-                    </Border>
-                </Grid>
-            </ui:Card>
-
-            <!-- 快捷记录区域 -->
-            <TextBlock Text="快捷记录"
-                       FontSize="14"
-                       FontWeight="SemiBold"
-                       Margin="0,0,0,8" />
-
-            <Grid Margin="0,0,0,16">
-                <ItemsControl ItemsSource="{Binding QuickAmounts}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="4" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ui:Button Content="{Binding StringFormat={}{0} ml}"
-                                       Command="{Binding DataContext.QuickRecordCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                       CommandParameter="{Binding}"
-                                       Appearance="Secondary"
-                                       HorizontalAlignment="Stretch"
-                                       Margin="2,0" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-
-            <!-- 自定义记录按钮 -->
-            <ui:Button Content="+ 自定义"
-                       Command="{Binding OpenCustomDialogCommand}"
-                       Appearance="Transparent"
-                       HorizontalAlignment="Stretch"
-                       Margin="0,0,0,16" />
-
-            <!-- 今日记录列表 -->
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0"
-                           Text="今日记录"
-                           FontSize="14"
-                           FontWeight="SemiBold" />
-
-                <TextBlock Grid.Column="2"
-                           Text="{Binding TodayStats.RecordCount, StringFormat=共 {0} 条}"
-                           FontSize="12"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-            </Grid>
-
-            <ui:Card>
-                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding TodayStats.Records}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}"
-                                        BorderThickness="0,0,0,1"
-                                        Padding="12,8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{Binding FormattedTime}"
-                                                   FontSize="13"
-                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                   VerticalAlignment="Center"
-                                                   Width="50" />
-
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{Binding AmountMl, StringFormat={}{0} ml}"
-                                                   FontSize="14"
-                                                   FontWeight="Medium"
-                                                   VerticalAlignment="Center"
-                                                   Margin="8,0" />
-
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{Binding Note}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   MaxWidth="100" />
-                                    </Grid>
+                                <Border DockPanel.Dock="Right"
+                                        Padding="10,5"
+                                        CornerRadius="999"
+                                        Background="#33FFFFFF"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding TodayStats.ProgressPercent, StringFormat={}{0}%}"
+                                               Foreground="White"
+                                               FontWeight="SemiBold"
+                                               FontSize="13" />
                                 </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                            </DockPanel>
+
+                            <ProgressBar Value="{Binding TodayStats.ProgressPercent, Mode=OneWay}"
+                                         Maximum="100"
+                                         Height="8"
+                                         Margin="0,4,0,0"
+                                         Foreground="#FFD5E8FF"
+                                         Background="#40FFFFFF" />
+
+                            <TextBlock Text="继续保持，今天也要喝够水。"
+                                       Foreground="White"
+                                       Opacity="0.9"
+                                       FontSize="12"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+                </ui:Card>
+
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="12"
+                        Margin="0,0,0,14">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,8">
+                            <TextBlock DockPanel.Dock="Left"
+                                       Text="快捷记录"
+                                       FontSize="14"
+                                       FontWeight="SemiBold" />
+                            <ui:Button DockPanel.Dock="Right"
+                                       Content="自定义"
+                                       Command="{Binding OpenCustomDialogCommand}"
+                                       Appearance="Transparent"
+                                       Padding="10,4" />
+                        </DockPanel>
+
+                        <ItemsControl ItemsSource="{Binding QuickAmounts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:Button Content="{Binding StringFormat={}{0} ml}"
+                                               Command="{Binding DataContext.QuickRecordCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               CommandParameter="{Binding}"
+                                               Appearance="Secondary"
+                                               HorizontalAlignment="Stretch"
+                                               Margin="3,2"
+                                               Padding="8,10" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="12">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,8">
+                            <TextBlock DockPanel.Dock="Left"
+                                       Text="今日记录"
+                                       FontSize="14"
+                                       FontWeight="SemiBold" />
+                            <TextBlock DockPanel.Dock="Right"
+                                       Text="{Binding TodayStats.RecordCount, StringFormat=共 {0} 条}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </DockPanel>
+
+                        <Border Visibility="{Binding TodayStats.RecordCount, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                Background="{DynamicResource ApplicationBackgroundBrush}"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,2,0,0">
+                            <TextBlock Text="今天还没有记录，先来一杯水吧。"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </Border>
+
+                        <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding TodayStats.Records}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                                BorderThickness="0,0,0,1"
+                                                Padding="8,7">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="56" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding FormattedTime}"
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding AmountMl, StringFormat={}{0} ml}"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding Note}"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           MaxWidth="120"
+                                                           VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Visibility="{Binding IsCustomDialogOpen, Converter={StaticResource BoolToVisibilityConverter}}"
+              Panel.ZIndex="100">
+            <Border Background="#80000000" />
+            <ui:Card Width="320"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Padding="16">
+                <StackPanel>
+                    <TextBlock Text="自定义饮水记录"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,10" />
+
+                    <TextBlock Text="饮水量（ml）"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,4" />
+
+                    <Slider Minimum="50"
+                            Maximum="1200"
+                            TickFrequency="50"
+                            IsSnapToTickEnabled="True"
+                            Value="{Binding CustomAmount, Mode=TwoWay}" />
+
+                    <TextBlock Text="{Binding CustomAmount, StringFormat={}{0} ml}"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               Margin="0,2,0,10" />
+
+                    <TextBlock Text="备注（可选）"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,4" />
+                    <TextBox Text="{Binding CustomNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Height="32"
+                             MaxLength="32" />
+
+                    <UniformGrid Columns="2" Margin="0,14,0,0">
+                        <ui:Button Content="取消"
+                                   Command="{Binding CancelCustomRecordCommand}"
+                                   Appearance="Secondary"
+                                   Margin="0,0,4,0" />
+                        <ui:Button Content="保存"
+                                   Command="{Binding ConfirmCustomRecordCommand}"
+                                   Appearance="Primary"
+                                   Margin="4,0,0,0" />
+                    </UniformGrid>
+                </StackPanel>
             </ui:Card>
-        </StackPanel>
-    </ScrollViewer>
+        </Grid>
+    </Grid>
 </UserControl>
+

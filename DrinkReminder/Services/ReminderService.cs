@@ -117,15 +117,20 @@ public class ReminderService : IDisposable
         var start = _settings.ReminderStartTime;
         var end = _settings.ReminderEndTime;
 
+        if (start == end)
+        {
+            // Treat equal start/end as an all-day reminder window.
+            return true;
+        }
+
         if (start <= end)
         {
             return currentTime >= start && currentTime <= end;
         }
 
-        // 跨午夜时间段，例如 22:00 - 08:00
+        // Spans midnight, e.g. 22:00 - 08:00.
         return currentTime >= start || currentTime <= end;
     }
-
     /// <summary>
     /// 发送提醒通知
     /// </summary>

@@ -4,16 +4,19 @@ using System.Windows.Data;
 namespace DrinkReminder.Converters;
 
 /// <summary>
-/// 选中天数到按钮外观的转换器
+/// Convert current view title to button appearance.
 /// </summary>
-public class SelectedDaysToAppearanceConverter : IValueConverter
+public class CurrentViewTitleToAppearanceConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is int selectedDays && parameter is string paramStr && int.TryParse(paramStr, out int paramDays))
+        if (value is string currentTitle && parameter is string tabTitle)
         {
-            return selectedDays == paramDays ? "Primary" : "Transparent";
+            return string.Equals(currentTitle, tabTitle, StringComparison.Ordinal)
+                ? "Primary"
+                : "Transparent";
         }
+
         return "Transparent";
     }
 
